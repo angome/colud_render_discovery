@@ -1,0 +1,57 @@
+<div class="admin-content">
+       <div class="admin-content-body">
+        <div class="am-cf am-padding am-padding-bottom-0">
+            <div class="am-fl am-cf">
+                <strong class="am-text-primary am-text-lg">设置</strong> /
+                <small>setting</small>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="am-tabs am-margin" data-am-tabs>
+            <ul class="am-tabs-nav am-nav am-nav-tabs">
+                <li class="am-active"><a href="#tab1">设置</a></li>
+            </ul>
+
+            <div class="am-tabs-bd">
+                <div class="am-tab-panel am-fade am-in am-active" id="tab1" style="min-height: 310px">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-4 am-u-md-2 am-text-right">渲染最大时间</div>
+                        <div class="am-u-sm-8 am-u-md-10">
+                            <select data-am-selected="{btnSize: 'sm'}" v-model="maxRenderTimeout" id="maxRenderTimeout">
+                                <option value="1">1小时</option>
+                                <option value="2">2小时</option>
+                                <option value="3">3小时</option>
+                                <option value="4">4小时</option>
+                                <option value="5">5小时</option>
+                                <option value="6">6小时</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="am-margin">
+            <span type="button" class="am-btn am-btn-primary am-btn-xs" v-on:click="post">提交保存</span>
+        </div>
+    </div>
+
+    <footer class="admin-content-footer">
+        <hr>
+        <p class="am-padding-left">© 2017 中图企业</p>
+    </footer>
+</div>
+
+<div class="am-modal am-modal-alert" tabindex="-1" id="my-alert">
+    <div class="am-modal-dialog">
+        <div class="am-modal-hd">提示</div>
+        <div class="am-modal-bd">
+            <!--保存成功-->
+        </div>
+        <div class="am-modal-footer">
+            <span class="am-modal-btn">确定</span>
+        </div>
+    </div>
+</div>

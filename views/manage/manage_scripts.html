@@ -1,0 +1,148 @@
+<script>
+    var cur_id = 0;
+    var ws = null;
+    var config = {
+        WSURI: "ws://"+location.hostname+":"+location.port+"/ws/web"
+    };
+
+    var app = new Vue({
+        el: '.admin-main',
+        data: {
+            queues: [],
+            queuesLen: 0
+        },
+
+        methods:{
+            group: function (id) {
+                var cur = $("#"+id);
+                if(cur.hasClass("am-icon-minus-square-o")){
+                    cur.removeClass("am-icon-minus-square-o");
+                    cur.addClass("am-icon-plus-square-o");
+                }else{
+                    cur.addClass("am-icon-minus-square-o");
+                    cur.removeClass("am-icon-plus-square-o");
+                }
+
+                $("tr").each(function () {
+                    if ($(this).attr("order") == id){
+                        $(this).toggle();
+                    }
+                });
+            },
+            start: function (id) {
+                cur_id = id;
+                $("#start-confirm").modal({
+                    onConfirm: function () {
+                        ws.send(JSON.stringify({Type: parseInt("<<.CONTROL_START>>"), Id: parseInt(cur_id)}));
+                    }
+                });
+            },
+            stop: function (id) {
+                cur_id = id;
+                $("#stop-confirm").modal({
+                    onConfirm: function () {
+                        ws.send(JSON.stringify({Type: parseInt("<<.CONTROL_STOP>>"), Id: cur_id}));
+                    }
+                });
+            },
+            restart: function (id) {
+                cur_id = id;
+                $("#restart-confirm").modal({
+                    onConfirm: function () {
+                        ws.send(JSON.stringify({Type: parseInt("<<.CONTROL_RESTART>>"), Id: cur_id}));
+                    }
+                });
+            },
+            del: function (id) {
+                cur_id = id;
+                $("#del-confirm").modal({
+                    onConfirm: function () {
+                        $.get(document.location.href, {action: "deleteTask", id: cur_id}, function (data) {
+                            if (!data["status"]) {
+                                return
+                            }
+
+                            var queues = [];
+                            for (var i = 0; i < app.queues.length; i++) {
+                                if (app.queues[i]["id"] != data["id"] && app.queues[i]["id"] != data["group_id"]) {
+                                    queues.push(app.queues[i]);
+                                }
+                            }
+
+                            app.queues = queues;
+                            var queuesLen = 0;
+                            for(var i=0; i< app.queues.length; i++){
+                                if(app.queues[i]["is_group_item"] == 0){
+                                    queuesLen++;
+                                }
+                            }
+
+                            app.queuesLen = queuesLen;
+                        }, "json");
+                    }
+                });
+            },
+            screen: function (id) {
+                ws.send(JSON.stringify({Type: parseInt("<<.CONTROL_SCREEN>>"), Id: id}));
+                $("#screen-modal").modal({width:830});
+            }
+        }
+    });
+
+    $().ready(function () {
+        getOnlineRender();
+        webSocket();
+    });
+
+    function webSocket() {
+        ws = new WebSocket(config.WSURI);
+        ws.onclose = function() {
+            ws = null;
+            setTimeout(function () {webSocket()}, 5000);
+        };
+
+        ws.onmessage = function(evt) {
+            var data = JSON.parse(evt.data);
+            if (data.Type == parseInt("<<.PROTOCOL_TYPE_NOTIFY_WEB>>")){
+                getOnlineRender();
+            }else if (data.Type == parseInt("<<.CONTROL_SCREEN>>")){
+                displayScreen(data.img);
+            }else if (data.Type == parseInt("<<.DESIGNATEIP>>")){
+                if(data["Err"] != ""){
+                    $("#err_string").text(data["Err"]);
+                    $("#err-confirm").modal();
+                    return
+                }
+
+                for (var i=0; i<app.queues.length; i++){
+                    if(app.queues[i]["id"] == data["Id"]) {
+                        app.queues[i]["work_status"] = parseInt("<<.RENDER_WORK>>");
+                        break
+                    }
+                }
+            }
+        };
+
+        ws.onerror = function() {
+            ws.close();
+        };
+    }
+
+    function getOnlineRender() {
+        $.get(document.location.href, {action: "tasks"}, function (data) {
+            app.queues = data;
+            var queuesLen = 0;
+            for(var i=0; i< data.length; i++){
+                if(app.queues[i]["is_group_item"] == 0){
+                    queuesLen++;
+                }
+            }
+
+            app.queuesLen = queuesLen;
+        });
+    }
+
+    function displayScreen(data) {
+        $("#screenImg").attr("src","data:image/jpeg;base64,"+ data)
+    }
+</script>

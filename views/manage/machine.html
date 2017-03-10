@@ -1,0 +1,70 @@
+<div class="admin-content">
+    <div class="admin-content-body">
+        <div class="am-cf am-padding am-padding-bottom-0">
+            <div class="am-fl am-cf">
+                <strong class="am-text-primary am-text-lg">渲染机</strong> /
+                <small>machine</small>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="am-tabs am-margin" data-am-tabs>
+            <ul class="am-tabs-nav am-nav am-nav-tabs">
+                <li class="am-active"><a href="#tab1">渲染机({{machinesLen}})</a></li>
+            </ul>
+
+            <div class="am-tabs-bd">
+                <div class="am-tab-panel am-fade am-in am-active" id="tab1">
+                    <div class="am-g am-margin-top">
+                        <div class="am-u-sm-8 am-u-md-12">
+                            <table class="am-table am-table-compact am-table-hover">
+                                <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>控制</th>
+                                    <th>IP</th>
+                                    <th>名称</th>
+                                    <th>组编号</th>
+                                    <th>上线时间</th>
+                                    <th>下线时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(machine, index) in machines">
+                                    <td>{{index+1}}</td>
+                                    <td>
+                                        <span type="button" class="am-btn am-btn-success am-btn-xs" v-bind:class="{'am-disabled': machine.online}"><i class="am-icon-play"></i> 启动</span>
+                                        <span type="button" class="am-btn am-btn-default am-btn-xs" v-bind:class="{'am-disabled': !machine.online}"><i class="am-icon-power-off"></i> 关机</span>
+                                        <span type="button" class="am-btn am-btn-warning am-btn-xs" v-bind:class="{'am-disabled': !machine.online}"><i class="am-icon-repeat"></i> 重启</span>
+                                        <span type="button" class="am-btn am-btn-danger am-btn-xs" v-bind:class="{'am-disabled': machine.online}"><i class="am-icon-times"></i> 删除</span>
+                                    </td>
+                                    <td>
+                                        <span class="am-badge am-badge-success" v-if="machine.online">在线</span>
+                                        <span class="am-badge" v-else>下线</span>
+                                        <i class="am-icon-desktop"></i> {{machine.ip}}
+                                    </td>
+                                    <td>
+                                        <input class="am-form-field am-input-sm" style="max-width: 150px;" type="text" v-model="machine.name">
+                                    </td>
+                                    <td>
+                                        <input class="am-form-field am-input-sm" style="max-width: 150px;" type="text" v-model="machine.group_id">
+                                    </td>
+                                    <td>{{machine.online_time}}</td>
+                                    <td>{{machine.offline_time}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer class="admin-content-footer">
+        <hr>
+        <p class="am-padding-left">© 2017 中图企业</p>
+    </footer>
+</div>

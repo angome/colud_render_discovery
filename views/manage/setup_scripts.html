@@ -1,0 +1,24 @@
+<script>
+    var ajaxUri = "/setup";
+    var app = new Vue({
+        el: '.admin-main',
+        data: {
+            maxRenderTimeout: "<<.data.MaxRenderTimeout>>"
+        },
+        methods:{
+            post: function () {
+                app.maxRenderTimeout = $("#maxRenderTimeout").val();
+                $.post(ajaxUri, {maxRenderTimeout: app.maxRenderTimeout}, function (data) {
+                    if(data){
+                        $(".am-modal-bd").html("保存成功！");
+                    }else {
+                        $(".am-modal-bd").html("保存失败！");
+                    }
+                    $('#my-alert').modal('open');
+                });
+            }
+        }
+    });
+
+    $.get();
+</script>

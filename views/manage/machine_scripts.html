@@ -1,0 +1,46 @@
+<script>
+    var ws = null;
+    var config = {
+        WSURI: "ws://"+location.hostname+":"+location.port+"/ws/web"
+    };
+
+    console.log(config.WSURI);
+    var app = new Vue({
+        el: '.admin-main',
+        data: {
+            machines: [],
+            machinesLen: 0
+        },
+        methods:{
+
+        }
+    });
+
+    $().ready(function () {
+        getOnlineRender();
+        webSocket();
+    });
+
+    function webSocket() {
+        ws = new WebSocket(config.WSURI);
+        ws.onclose = function() {
+            ws = null;
+            setTimeout(function () {webSocket()}, 5000);
+        };
+
+        ws.onmessage = function(evt) {
+            getOnlineRender();
+        };
+
+        ws.onerror = function() {
+            ws.close();
+        };
+    }
+
+    function getOnlineRender() {
+        $.get(document.location.href, {action: "renders"}, function (data) {
+            app.machines = data;
+            app.machinesLen = data.length;
+        });
+    }
+</script>
